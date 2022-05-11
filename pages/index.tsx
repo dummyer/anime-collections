@@ -1,6 +1,8 @@
 import Head from "next/head";
 import Home from "./Home";
 import HeaderNav from "./components/HeaderNav";
+import SideBar from "./components/SideBar";
+import "@emotion/react";
 
 export default function Index() {
   return (
@@ -11,7 +13,17 @@ export default function Index() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <HeaderNav />
-      <Home />
+      {/* <div css={{ display: 'flex' }}>
+        <div css={{ flex: '8' }}>
+          <Home />
+        </div>
+
+        <div css={{ flex: '2' }}>
+          <SideBar />
+        </div>
+
+      </div> */}
+
     </div>
   );
 }
