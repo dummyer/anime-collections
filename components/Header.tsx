@@ -13,8 +13,13 @@ function Header() {
     }
   `;
 
+  const Head = styled.div`
+    display:flex;
+    justify-content: space-between;
+  `;
+
   return (
-    <header>
+    <Head>
       <div>
         <img
           src="/assets/logo/anime_collections.png"
@@ -23,7 +28,7 @@ function Header() {
           height={60}
         />
       </div>
-      <div className="rightBar">
+      <div>
         <ul>
           <li>
             <Button>Login</Button>
@@ -33,7 +38,7 @@ function Header() {
           </li>
         </ul>
       </div>
-    </header>
+    </Head>
   );
 }
 
