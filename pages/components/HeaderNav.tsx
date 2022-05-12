@@ -67,20 +67,19 @@ const HeaderNav = () => {
 
   function hoverBanner(isHover) {
     setIsBannerHovered(isHover);
-  };
+  }
 
-  const ref = React.useRef<HTMLDivElement>(null)
+  const ref = React.useRef<HTMLDivElement>(null);
   function scrollBanner(scrollDirection) {
     var scrollOffset = 20;
     console.log(scrollDirection);
     ref.current.scrollLeft += scrollOffset;
-  };
+  }
 
   return (
     <Head>
       <div>
         <Container>
-
           <div
             css={{
               position: "",
@@ -92,7 +91,6 @@ const HeaderNav = () => {
             }}
             onMouseOver={hoverBanner.bind(this, true)}
             onMouseOut={hoverBanner.bind(this, false)}
-
           >
             <img
               src="/assets/img/cat_banner.jpg"
@@ -144,46 +142,44 @@ const HeaderNav = () => {
               <input type="radio" name="banner"></input>
               <input type="radio" name="banner"></input>
             </div>
-            {isBannerHovered && <div
-              css={{
-                position: "absolute",
-                display: "flex",
-                top: "15vh",
-                justifyContent: "space-between",
-                width: "100vw",
-                listStyle: "none",
-                margin: "0px !important",
-              }}
-            >
-              <Button
+            {isBannerHovered && (
+              <div
                 css={{
-                  backgroundColor: "skyblue",
-                  width: "100px",
-                  height: "100px",
-                  opacity: "0.5",
-                  color: "white",
+                  position: "absolute",
+                  display: "flex",
+                  top: "15vh",
+                  justifyContent: "space-between",
+                  width: "100vw",
+                  listStyle: "none",
+                  margin: "0px !important",
                 }}
-
-
-                onClick={scrollBanner.bind(this, 'left')}
               >
-                <ArrowBackIos />
-              </Button>
-              <Button
-                css={{
-                  backgroundColor: "skyblue",
-                  width: "100px",
-                  height: "100px",
-                  opacity: "0.5",
-                  color: "white",
-                }}
-
-                onClick={scrollBanner.bind(this, 'right')}
-              >
-                <ArrowForwardIos />
-              </Button>
-            </div>}
-
+                <Button
+                  css={{
+                    backgroundColor: "skyblue",
+                    width: "100px",
+                    height: "100px",
+                    opacity: "0.5",
+                    color: "white",
+                  }}
+                  onClick={scrollBanner.bind(this, "left")}
+                >
+                  <ArrowBackIos />
+                </Button>
+                <Button
+                  css={{
+                    backgroundColor: "skyblue",
+                    width: "100px",
+                    height: "100px",
+                    opacity: "0.5",
+                    color: "white",
+                  }}
+                  onClick={scrollBanner.bind(this, "right")}
+                >
+                  <ArrowForwardIos />
+                </Button>
+              </div>
+            )}
           </div>
 
           <FixedHeader>
@@ -241,9 +237,9 @@ const HeaderNav = () => {
             </div>
           </FixedHeader>
         </Container>
-      </div >
-    </Head >
+      </div>
+    </Head>
   );
-}
+};
 
 export default HeaderNav;
