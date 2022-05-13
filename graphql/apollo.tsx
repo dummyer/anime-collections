@@ -8,7 +8,7 @@ import {
 import { onError } from "@apollo/client/link/error";
 import { PropsWithChildren } from "react";
 
-const GRAPHQL_ENDPOINTER = "https://anilist.co/graphiql";
+const GRAPHQL_ENDPOINTER = "https://graphql.anilist.co";
 
 const ApolloProviders: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   const errorLink = onError(({ graphQLErrors, networkError }) => {
@@ -23,9 +23,7 @@ const ApolloProviders: React.FC<PropsWithChildren<{}>> = ({ children }) => {
     errorLink,
     new HttpLink({
       uri: GRAPHQL_ENDPOINTER,
-      //   fetchOptions: {
-      //     mode: "no-cors",
-      //   },
+
     }),
   ]);
 

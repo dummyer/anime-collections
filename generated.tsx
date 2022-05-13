@@ -4669,51 +4669,117 @@ export type UserModData = {
   privacy?: Maybe<Scalars['Int']>;
 };
 
-export type Unnamed_1_QueryVariables = Exact<{
-  id?: InputMaybe<Scalars['Int']>;
+export type GetOneAnimeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetOneAnimeQuery = { __typename?: 'Query', Media?: { __typename?: 'Media', id: number, title?: { __typename?: 'MediaTitle', romaji?: string | null, english?: string | null, native?: string | null, userPreferred?: string | null } | null } | null };
+
+export type MostFavAnimeQueryVariables = Exact<{
+  page?: InputMaybe<Scalars['Int']>;
+  perPage?: InputMaybe<Scalars['Int']>;
+  search?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type Unnamed_1_Query = { __typename?: 'Query', Media?: { __typename?: 'Media', id: number, title?: { __typename?: 'MediaTitle', romaji?: string | null, english?: string | null, native?: string | null } | null } | null };
+export type MostFavAnimeQuery = { __typename?: 'Query', Page?: { __typename?: 'Page', pageInfo?: { __typename?: 'PageInfo', total?: number | null, perPage?: number | null } | null, media?: Array<{ __typename?: 'Media', id: number, type?: MediaType | null, genres?: Array<string | null> | null, status?: MediaStatus | null, seasonYear?: number | null, episodes?: number | null, duration?: number | null, title?: { __typename?: 'MediaTitle', romaji?: string | null, english?: string | null, native?: string | null } | null, coverImage?: { __typename?: 'MediaCoverImage', large?: string | null, medium?: string | null, color?: string | null } | null } | null> | null } | null };
 
 
-export const Document = gql`
-    query ($id: Int) {
-  Media(id: $id, type: ANIME) {
+export const GetOneAnimeDocument = gql`
+    query getOneAnime {
+  Media(id: 11061) {
     id
     title {
       romaji
       english
       native
+      userPreferred
     }
   }
 }
     `;
 
 /**
- * __useQuery__
+ * __useGetOneAnimeQuery__
  *
- * To run a query within a React component, call `useQuery` and pass it any options that fit your needs.
- * When your component renders, `useQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetOneAnimeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOneAnimeQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useQuery({
+ * const { data, loading, error } = useGetOneAnimeQuery({
  *   variables: {
- *      id: // value for 'id'
  *   },
  * });
  */
-export function useQuery(baseOptions?: Apollo.QueryHookOptions<Query, QueryVariables>) {
+export function useGetOneAnimeQuery(baseOptions?: Apollo.QueryHookOptions<GetOneAnimeQuery, GetOneAnimeQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<Query, QueryVariables>(Document, options);
+        return Apollo.useQuery<GetOneAnimeQuery, GetOneAnimeQueryVariables>(GetOneAnimeDocument, options);
       }
-export function useLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Query, QueryVariables>) {
+export function useGetOneAnimeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOneAnimeQuery, GetOneAnimeQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<Query, QueryVariables>(Document, options);
+          return Apollo.useLazyQuery<GetOneAnimeQuery, GetOneAnimeQueryVariables>(GetOneAnimeDocument, options);
         }
-export type QueryHookResult = ReturnType<typeof useQuery>;
-export type LazyQueryHookResult = ReturnType<typeof useLazyQuery>;
-export type QueryResult = Apollo.QueryResult<Query, QueryVariables>;
+export type GetOneAnimeQueryHookResult = ReturnType<typeof useGetOneAnimeQuery>;
+export type GetOneAnimeLazyQueryHookResult = ReturnType<typeof useGetOneAnimeLazyQuery>;
+export type GetOneAnimeQueryResult = Apollo.QueryResult<GetOneAnimeQuery, GetOneAnimeQueryVariables>;
+export const MostFavAnimeDocument = gql`
+    query mostFavAnime($page: Int, $perPage: Int, $search: String) {
+  Page(page: $page, perPage: $perPage) {
+    pageInfo {
+      total
+      perPage
+    }
+    media(search: $search, type: ANIME, sort: FAVOURITES_DESC) {
+      id
+      title {
+        romaji
+        english
+        native
+      }
+      type
+      genres
+      status
+      seasonYear
+      coverImage {
+        large
+        medium
+        color
+      }
+      episodes
+      duration
+    }
+  }
+}
+    `;
+
+/**
+ * __useMostFavAnimeQuery__
+ *
+ * To run a query within a React component, call `useMostFavAnimeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMostFavAnimeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMostFavAnimeQuery({
+ *   variables: {
+ *      page: // value for 'page'
+ *      perPage: // value for 'perPage'
+ *      search: // value for 'search'
+ *   },
+ * });
+ */
+export function useMostFavAnimeQuery(baseOptions?: Apollo.QueryHookOptions<MostFavAnimeQuery, MostFavAnimeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MostFavAnimeQuery, MostFavAnimeQueryVariables>(MostFavAnimeDocument, options);
+      }
+export function useMostFavAnimeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MostFavAnimeQuery, MostFavAnimeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MostFavAnimeQuery, MostFavAnimeQueryVariables>(MostFavAnimeDocument, options);
+        }
+export type MostFavAnimeQueryHookResult = ReturnType<typeof useMostFavAnimeQuery>;
+export type MostFavAnimeLazyQueryHookResult = ReturnType<typeof useMostFavAnimeLazyQuery>;
+export type MostFavAnimeQueryResult = Apollo.QueryResult<MostFavAnimeQuery, MostFavAnimeQueryVariables>;

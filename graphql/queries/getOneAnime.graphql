@@ -1,0 +1,11 @@
+query getOneAnime{
+  Media(id: 11061) {
+    id
+    title {
+      romaji
+      english
+      native
+      userPreferred
+    }
+  }
+}

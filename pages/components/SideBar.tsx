@@ -27,7 +27,7 @@ const SideBar = () => {
                     fontWeight: "bold",
                     fontSize: "1em",
                 }}>
-                    Favourite Anime
+                    My Favourite
                 </div>
                 <a
                     href="#"
