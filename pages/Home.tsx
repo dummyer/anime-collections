@@ -1,12 +1,11 @@
 import styled from "@emotion/styled";
 import "@emotion/react";
-import { GridView, Splitscreen, StarBorder } from "@mui/icons-material";
+import { GridView, Splitscreen, StarBorder, ArrowBackIos } from "@mui/icons-material";
 import React, { useState, useEffect, useRef } from "react";
 import { useQuery } from "@apollo/client";
 import { MostFavAnimeDocument } from "../generated";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import { red } from "@mui/material/colors";
 
 const Home = () => {
     const { data, error, loading } = useQuery(MostFavAnimeDocument);
@@ -53,8 +52,8 @@ const Home = () => {
         setIsSelectedGrid(isSelectGrid);
     }
 
-    function viewDetailAnime() {
-        setIsViewDetailAnime(true);
+    function viewDetailAnime(isView) {
+        setIsViewDetailAnime(isView);
     }
 
     useEffect(() => {
@@ -216,7 +215,7 @@ const Home = () => {
                                                                         cursor: 'pointer',
                                                                     }
                                                                 }}
-                                                                onClick={viewDetailAnime.bind(this)}
+                                                                onClick={viewDetailAnime.bind(this, true)}
                                                             >
                                                                 {item.title.english}
                                                             </div>
@@ -235,13 +234,7 @@ const Home = () => {
                                                             >
                                                                 <b>Release year:</b> {item.seasonYear}
                                                             </div>
-                                                            <div
-                                                                css={{
-                                                                    fontSize: "0.7em",
-                                                                }}
-                                                            >
-                                                                <b>Producer:</b> Toei Animation
-                                                            </div>
+
                                                             <div
                                                                 css={{
                                                                     fontSize: "0.7em",
@@ -262,7 +255,39 @@ const Home = () => {
                             </div></div>
 
                             :
-                            <div>asdasd</div>
+                            <div>
+                                <div
+                                    css={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignContent: "center",
+                                        alignItems: "center",
+                                        width: "100%",
+                                        height: "5vh",
+                                    }}
+                                >
+                                    <div
+                                        css={{
+                                            fontWeight: "bold",
+                                            fontSize: "1em",
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignContent: "center",
+                                            alignItems: "center",
+                                            ':hover': {
+                                                opacity: '0.5',
+                                                cursor: 'pointer'
+                                            }
+                                        }}
+                                        onClick={viewDetailAnime.bind(this, false)}
+                                    >
+                                        <ArrowBackIos /> <span>Back</span>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
                         }
 
 
