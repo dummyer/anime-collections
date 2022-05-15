@@ -30,22 +30,22 @@ const Home = () => {
     //showModal();
   };
 
-  const [myAnimeCollections, setMyAnimeCollections] = useState([]);
   const [myAnimeCollectionsId, setMyAnimeCollectionsId] = useState([]);
-  useEffect(() => {
-    const messagesRef = query(collection(db, "myAnimeCollections"));
-    onSnapshot(messagesRef, (snapshot) => {
-      // Maps the documents and sets them to the `msgs` state.
-      setMyAnimeCollections(
-        snapshot.docs.map((doc) => ({
-          id: doc.id,
-          data: doc.data(),
-        }))
-      );
-    });
-  }, []);
+  // const [myAnimeCollections, setMyAnimeCollections] = useState([]);
+  // useEffect(() => {
+  //   const messagesRef = query(collection(db, "myAnimeCollections"));
+  //   onSnapshot(messagesRef, (snapshot) => {
+  //     // Maps the documents and sets them to the `msgs` state.
+  //     setMyAnimeCollections(
+  //       snapshot.docs.map((doc) => ({
+  //         id: doc.id,
+  //         data: doc.data(),
+  //       }))
+  //     );
+  //   });
+  // }, []);
 
-  const [showModal, setShowModal] = useRecoilState(modalState);
+  //const [showModal, setShowModal] = useRecoilState(modalState);
   const [selectedAnimeId, setSelectedAnimeId] = useState(1);
   const queryMultiple = () => {
     const res1 = useQuery(MostFavAnimeDocument);
@@ -170,19 +170,42 @@ const Home = () => {
     setSelectedAnimeId(animeId);
   };
 
+  const [myCollectionAlbums, setMyCollectionAlbums] = useState([]);
+  // useEffect(() => {
+  //   const messagesRef = query(
+  //     collection(db, "myCollectionAlbums"),
+  //     orderBy("created_at", "desc")
+  //   );
+  //   onSnapshot(messagesRef, (snapshot) => {
+  //     // Maps the documents and sets them to the `msgs` state.
+  //     setMyCollectionAlbums(
+  //       snapshot.docs.map((doc) => ({
+  //         id: doc.id,
+  //         data: doc.data(),
+  //       }))
+  //     );
+  //   });
+  // }, []);
+  const getAnimeCollectionId = () => {
+    var tmp = [];
+    myCollectionAlbums.map((item) => {
+      item.data.added_anime_id.map((itemDetail) => {
+        if (tmp.includes(itemDetail) == false) {
+          tmp.push(itemDetail);
+        }
+      });
+    });
+    console.log(tmp);
+    setMyAnimeCollectionsId(tmp);
+  };
+
+  useEffect(() => {
+    getAnimeCollectionId();
+  }, []);
+
   useEffect(() => {
     if (dataMostFavAnime) {
       setMostPopularAnime(dataMostFavAnime.Page.media);
-      //var tmp = [];
-      // myAnimeCollections.map((item) => {
-      //   tmp.push(item.data.anime_id);
-      //   // setMyAnimeCollectionsId((oldArray) => [
-      //   //   ...oldArray,
-      //   //   item.data.anime_id,
-      //   // ]);
-      // });
-      // setMyAnimeCollectionsId(tmp);
-      // console.log(myAnimeCollectionsId);
     }
 
     if (selectedAnimeId != 0 && dataGetOneAnime) {
@@ -302,7 +325,11 @@ const Home = () => {
                               css={{
                                 position: "relative",
                                 color: "black",
-                                backgroundColor: "white",
+                                backgroundColor: `${
+                                  myAnimeCollectionsId.includes(item.id)
+                                    ? "orange"
+                                    : "white"
+                                }`,
 
                                 borderRadius: "100px",
                                 fontSize: "1px",
@@ -582,7 +609,10 @@ const Home = () => {
                             </ButtonTrailer>
                           </div>
                         </TransitionsModal>
-                        <CollectionModal ref={modalRef}>
+                        <CollectionModal
+                          ref={modalRef}
+                          animeid={selectedAnimeId}
+                        >
                           <div>
                             <ButtonAddCollection>
                               <Stars /> Add to Collection

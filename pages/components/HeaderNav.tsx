@@ -1,8 +1,14 @@
 import styled from "@emotion/styled";
 import "@emotion/react";
-import { Search, ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
+import {
+  Search,
+  ArrowBackIos,
+  ArrowForwardIos,
+  StarBorder,
+} from "@mui/icons-material";
 import React, { useState, useEffect, useRef } from "react";
 import { withTheme } from "@emotion/react";
+import AlbumModal from "./ModalAlbum";
 
 const HeaderNav = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -205,13 +211,27 @@ const HeaderNav = () => {
                     marginRight: "5px",
                   }}
                 >
-                  <Button>
+                  <AlbumModal>
+                    <div>
+                      <StarBorder
+                        css={{
+                          fontSize: "20px",
+                          ":hover": {
+                            opacity: "0.5",
+                            cursor: "pointer",
+                          },
+                        }}
+                      />
+                    </div>
+                  </AlbumModal>
+
+                  {/* <Button>
                     <Search
                       css={{
                         fontSize: "20px",
                       }}
                     />
-                  </Button>
+                  </Button> */}
                 </li>
                 <li
                   css={{

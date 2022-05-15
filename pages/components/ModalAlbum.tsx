@@ -8,9 +8,11 @@ import Typography from "@mui/material/Typography";
 import ReactPlayer from "react-player";
 import { Close } from "@mui/icons-material";
 import "@emotion/react";
+import Collapsible from "react-collapsible";
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   onSnapshot,
   orderBy,
@@ -21,6 +23,10 @@ import {
 import { useEffect, useState } from "react";
 import { db } from "../firebase/firebase";
 import styled from "@emotion/styled";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import { GetOneAnimeDocument } from "../../generated";
+import { useQuery } from "@apollo/client";
 
 const style = {
   position: "absolute" as "absolute",
@@ -34,11 +40,13 @@ const style = {
   p: 4,
 };
 
-export default function CollectionModal(props) {
+export default function AlbumModal(props) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [newAlbum, setNewAlbum] = useState("");
+
+  const [detailSavedAnime, setDetailSavedAnime] = useState([]);
   const [myCollectionAlbums, setMyCollectionAlbums] = useState([]);
   useEffect(() => {
     const messagesRef = query(
@@ -71,22 +79,25 @@ export default function CollectionModal(props) {
     }
   `;
 
+  const MySwal = withReactContent(Swal);
+
   const addToCollectionHandle = async (album_id, currentSavedAnime) => {
     if (album_id != "") {
       try {
-        if (currentSavedAnime.includes(props.animeid) == false) {
-          currentSavedAnime.push(props.animeid);
-        } else {
-          var index = currentSavedAnime.indexOf(props.animeid);
-          if (index !== -1) {
-            currentSavedAnime.splice(index, 1);
-          }
-        }
-
         const taskDocRef = doc(db, "myCollectionAlbums", album_id);
-        await updateDoc(taskDocRef, {
-          added_anime_id: currentSavedAnime,
-          update_at: Timestamp.now(),
+        MySwal.fire({
+          showCancelButton: true,
+          confirmButtonText: "Delete",
+          allowOutsideClick: false,
+          title: (
+            <p>Album might contains items, do you still want to delete?</p>
+          ),
+        }).then((result) => {
+          if (result.isConfirmed) {
+            deleteDoc(taskDocRef).then(() => {
+              MySwal.fire("Album Deleted!", "", "success");
+            });
+          }
         });
       } catch (err) {
         alert(err);
@@ -125,6 +136,15 @@ export default function CollectionModal(props) {
     }
   };
 
+  // const [searchId, setSearchId] = useState(0);
+  // const { data, error, loading } = useQuery(GetOneAnimeDocument, {
+  //   variables: {
+  //     id: searchId,
+  //   },
+  // });
+
+  const getAnimeByIds = (saved_anime_id) => {};
+
   return (
     <div>
       <div onClick={handleOpen}>{props.children}</div>
@@ -156,7 +176,7 @@ export default function CollectionModal(props) {
                     alignItems: "center",
                   }}
                 >
-                  <span>Choose Albums</span>
+                  <span>My Collection Albums</span>
                   <span
                     css={{
                       marginLeft: "10px",
@@ -190,6 +210,7 @@ export default function CollectionModal(props) {
                   <div
                     css={{
                       paddingBottom: "10px",
+                      display: "flex",
                     }}
                   >
                     <button
@@ -200,7 +221,7 @@ export default function CollectionModal(props) {
                       )}
                       css={{
                         marginRight: "10px",
-                        backgroundColor: "orange",
+                        backgroundColor: "red",
                         border: "0px",
                         padding: "5px",
                         color: "white",
@@ -216,11 +237,35 @@ export default function CollectionModal(props) {
                         },
                       }}
                     >
-                      Save
+                      Delete
                     </button>
-                    <label>
+                    {/* <label>
                       {item.data.album_name} ({item.data.added_anime_id.length})
-                    </label>
+                    </label> */}
+                    <span>
+                      <Collapsible
+                        trigger={
+                          <label
+                            onClick={getAnimeByIds.bind(
+                              this,
+                              item.data.added_anime_id
+                            )}
+                            css={{
+                              color: "blue",
+                              ":hover": {
+                                opacity: "0.5",
+                                cursor: "pointer",
+                              },
+                            }}
+                          >
+                            {item.data.album_name} (
+                            {item.data.added_anime_id.length})
+                          </label>
+                        }
+                      >
+                        <div>{item.data.added_anime_id}</div>
+                      </Collapsible>
+                    </span>
                   </div>
                 );
               })}
