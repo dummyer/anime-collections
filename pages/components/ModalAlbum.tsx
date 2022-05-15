@@ -263,7 +263,7 @@ export default function AlbumModal(props) {
                           </label>
                         }
                       >
-                        <div>{item.data.added_anime_id}</div>
+                        <div>{item.data.added_anime_id.join(", ")}</div>
                       </Collapsible>
                     </span>
                   </div>
