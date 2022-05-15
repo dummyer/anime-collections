@@ -95,7 +95,7 @@ export default function CollectionModal(props) {
   };
 
   const addNewAlbum = async () => {
-    var format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+    var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
     if (newAlbum != "") {
       if (!format.test(newAlbum)) {
         try {
