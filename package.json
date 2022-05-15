@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "export": "next export",
     "generate-types": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {

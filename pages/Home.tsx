@@ -23,11 +23,11 @@ import { db } from "./firebase/firebase";
 const Home = () => {
   //const { data, error, loading } = useQuery(MostFavAnimeDocument);
   const modalRef = ({ handleShow }) => {
-    showModal = handleShow;
+    //showModal = handleShow;
   };
 
   const onTrailerClick = () => {
-    showModal();
+    //showModal();
   };
 
   const [myAnimeCollections, setMyAnimeCollections] = useState([]);
