@@ -1,8 +1,39 @@
 import styled from "@emotion/styled";
 import "@emotion/react";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { db } from "../firebase/firebase";
 
 const SideBar = () => {
-  let items = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"];
+  const [myAnimeCollections, setMyAnimeCollections] = useState([]);
+  useEffect(() => {
+    const messagesRef = query(collection(db, "myAnimeCollections"));
+    onSnapshot(messagesRef, (snapshot) => {
+      // Maps the documents and sets them to the `msgs` state.
+      setMyAnimeCollections(
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          data: doc.data(),
+        }))
+      );
+    });
+  }, []);
+  //   useEffect(() => {
+  //     const collectionRef = collection(db, "myAnimeCollections");
+  //     const q = query(collectionRef, orderBy("timestamp", "desc"));
+  //     const getData = onSnapshot(q, (querySnapshot) => {
+  //       setMyAnimeCollections(
+  //         querySnapshot.docs.map((doc) => ({
+  //           //...doc.data(),
+  //           id: doc.id,
+  //           data: doc.data(),
+  //           //timestamp: doc.data().timestamp?.toDate().getTime(),
+  //         }))
+  //       );
+  //     });
+  //     return getData;
+  //   }, []);
+
   return (
     <div
       css={{
@@ -20,8 +51,8 @@ const SideBar = () => {
         css={{
           display: "flex",
           justifyContent: "space-between",
-          alignContent: "center",
-          alignItems: "center",
+          alignContent: "start",
+          alignItems: "start",
           width: "100%",
         }}
       >
@@ -43,7 +74,7 @@ const SideBar = () => {
           View All
         </a>
       </div>
-      {items.map((item, index) => {
+      {myAnimeCollections.map((item) => {
         return (
           <div
             css={{
@@ -80,7 +111,7 @@ const SideBar = () => {
                   marginBottom: "10px",
                 }}
               >
-                Captain Earth
+                {item.data.anime_id}
               </div>
 
               <div

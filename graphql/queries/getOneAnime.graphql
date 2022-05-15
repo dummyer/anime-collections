@@ -1,5 +1,5 @@
-query getOneAnime {
-  Media(id: 11061) {
+query getOneAnime($id: Int) {
+  Media(id: $id) {
     id
     title {
       romaji

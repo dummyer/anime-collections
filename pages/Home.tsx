@@ -6,6 +6,7 @@ import {
   StarBorder,
   ArrowBackIos,
   PlayCircle,
+  Stars,
 } from "@mui/icons-material";
 import React, { useState, useEffect, useRef } from "react";
 import { useQuery } from "@apollo/client";
@@ -15,7 +16,9 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { useRecoilState } from "recoil";
 import { modalState } from "./atoms/modalAtom";
 import TransitionsModal from "./components/ModalVideo";
-import CollectionModal from "./components/ModalCollections";
+import CollectionModal from "./components/ModalAddCollections";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { db } from "./firebase/firebase";
 
 const Home = () => {
   //const { data, error, loading } = useQuery(MostFavAnimeDocument);
@@ -27,10 +30,30 @@ const Home = () => {
     showModal();
   };
 
+  const [myAnimeCollections, setMyAnimeCollections] = useState([]);
+  const [myAnimeCollectionsId, setMyAnimeCollectionsId] = useState([]);
+  useEffect(() => {
+    const messagesRef = query(collection(db, "myAnimeCollections"));
+    onSnapshot(messagesRef, (snapshot) => {
+      // Maps the documents and sets them to the `msgs` state.
+      setMyAnimeCollections(
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          data: doc.data(),
+        }))
+      );
+    });
+  }, []);
+
   const [showModal, setShowModal] = useRecoilState(modalState);
+  const [selectedAnimeId, setSelectedAnimeId] = useState(1);
   const queryMultiple = () => {
     const res1 = useQuery(MostFavAnimeDocument);
-    const res2 = useQuery(GetOneAnimeDocument);
+    const res2 = useQuery(GetOneAnimeDocument, {
+      variables: {
+        id: selectedAnimeId,
+      },
+    });
     return [res1, res2];
   };
 
@@ -142,14 +165,35 @@ const Home = () => {
     setIsSelectedGrid(isSelectGrid);
   }
 
-  function viewDetailAnime(isView) {
+  const viewDetailAnime = (isView, animeId) => {
     setIsViewDetailAnime(isView);
-    if (dataGetOneAnime) {
+    setSelectedAnimeId(animeId);
+  };
+
+  useEffect(() => {
+    if (dataMostFavAnime) {
+      setMostPopularAnime(dataMostFavAnime.Page.media);
+      //var tmp = [];
+      // myAnimeCollections.map((item) => {
+      //   tmp.push(item.data.anime_id);
+      //   // setMyAnimeCollectionsId((oldArray) => [
+      //   //   ...oldArray,
+      //   //   item.data.anime_id,
+      //   // ]);
+      // });
+      // setMyAnimeCollectionsId(tmp);
+      // console.log(myAnimeCollectionsId);
+    }
+
+    if (selectedAnimeId != 0 && dataGetOneAnime) {
       setDetailAnime_title(dataGetOneAnime.Media.title.english);
       setDetailAnime_cover(dataGetOneAnime.Media.coverImage.large);
-      setDetailAnime_trailer(
-        "https://www.youtube.com/watch?v=" + dataGetOneAnime.Media.trailer.id
-      );
+      if (dataGetOneAnime.Media.trailer != null) {
+        setDetailAnime_trailer(
+          "https://www.youtube.com/watch?v=" + dataGetOneAnime.Media.trailer.id
+        );
+      }
+
       setDetailAnime_genre(dataGetOneAnime.Media.genres.join(", "));
       setDetailAnime_desc(dataGetOneAnime.Media.description);
       setDetailAnime_status(dataGetOneAnime.Media.status);
@@ -158,13 +202,7 @@ const Home = () => {
       setDetailAnime_duration(dataGetOneAnime.Media.duration);
       setDetailAnime_score(dataGetOneAnime.Media.averageScore);
     }
-  }
-
-  useEffect(() => {
-    if (dataMostFavAnime) {
-      setMostPopularAnime(dataMostFavAnime.Page.media);
-    }
-  }, [dataMostFavAnime]);
+  }, [dataMostFavAnime, dataGetOneAnime]);
 
   if (loadMostFavAnime) {
     return (
@@ -265,6 +303,7 @@ const Home = () => {
                                 position: "relative",
                                 color: "black",
                                 backgroundColor: "white",
+
                                 borderRadius: "100px",
                                 fontSize: "1px",
 
@@ -274,7 +313,9 @@ const Home = () => {
                                 },
                               }}
                             >
-                              <StarBorder />
+                              <CollectionModal ref={modalRef} animeid={item.id}>
+                                <StarBorder />
+                              </CollectionModal>
                             </div>
                             <div
                               css={{
@@ -320,7 +361,11 @@ const Home = () => {
                                       cursor: "pointer",
                                     },
                                   }}
-                                  onClick={viewDetailAnime.bind(this, true)}
+                                  onClick={viewDetailAnime.bind(
+                                    this,
+                                    true,
+                                    item.id
+                                  )}
                                 >
                                   {item.title.english}
                                 </div>
@@ -357,150 +402,278 @@ const Home = () => {
                   </GridContainer>
                 </div>
               </div>
-            ) : (
+            ) : loadGetOneAnime ? (
               <div>
-                <div
-                  css={{
-                    width: "100%",
-                    height: "5vh",
-                  }}
-                >
+                <div>
                   <div
                     css={{
-                      fontWeight: "bold",
-                      fontSize: "1em",
-                      display: "flex",
-                      alignContent: "center",
-                      alignItems: "center",
-                      marginBottom: "10px",
-                      ":hover": {
-                        opacity: "0.5",
-                        cursor: "pointer",
-                      },
-                    }}
-                    onClick={viewDetailAnime.bind(this, false)}
-                  >
-                    <ArrowBackIos /> <span>Back</span>
-                  </div>
-                  <div
-                    css={{
-                      display: "flex",
+                      width: "100%",
+                      height: "5vh",
                     }}
                   >
                     <div
                       css={{
+                        fontWeight: "bold",
+                        fontSize: "1em",
                         display: "flex",
-                        flexDirection: "column",
+                        alignContent: "center",
+                        alignItems: "center",
+                        marginBottom: "10px",
+                        ":hover": {
+                          opacity: "0.5",
+                          cursor: "pointer",
+                        },
+                      }}
+                      onClick={viewDetailAnime.bind(this, false, 1)}
+                    >
+                      <ArrowBackIos /> <span>Back</span>
+                    </div>
+                    <div
+                      css={{
+                        display: "flex",
                       }}
                     >
-                      <img
-                        css={{
-                          marginRight: "10px",
-                        }}
-                        src={detailAnime_cover}
-                        width="200px"
-                      ></img>
-                      <TransitionsModal
-                        ref={modalRef}
-                        videoFilePath={detailAnime_trailer}
-                      >
-                        <div>
-                          <ButtonTrailer>
-                            <PlayCircle /> Watch Trailer
-                          </ButtonTrailer>
-                        </div>
-                      </TransitionsModal>
-                      <CollectionModal ref={modalRef}>
-                        <div>
-                          <ButtonAddCollection>
-                            <PlayCircle /> Add to Collection
-                          </ButtonAddCollection>
-                        </div>
-                      </CollectionModal>
-                    </div>
-                    <div>
-                      <div>
-                        <h3>{detailAnime_title}</h3>
-                      </div>
                       <div
                         css={{
-                          fontSize: "0.8em",
-                          color: "grey",
+                          display: "flex",
+                          flexDirection: "column",
                         }}
                       >
-                        {detailAnime_genre}
+                        <Skeleton
+                          height="300px"
+                          width="200px"
+                          css={{
+                            marginRight: "10px",
+                          }}
+                        />
                       </div>
-                      <hr
-                        css={{
-                          border: "2px skyblue solid",
-                        }}
-                      ></hr>
                       <div>
                         <div>
-                          <b
-                            css={{
-                              fontSize: "2em",
-                              color: "orange",
-                            }}
-                          >
-                            {detailAnime_score}
-                          </b>
-                          <span
-                            css={{
-                              fontSize: "1em",
-                            }}
-                          >
-                            /100
-                          </span>
+                          <h3>
+                            <Skeleton width="100px" />
+                          </h3>
                         </div>
                         <div
                           css={{
-                            fontSize: "0.7em",
+                            fontSize: "0.8em",
+                            color: "grey",
                           }}
                         >
-                          <b>Status:</b> {detailAnime_status}
+                          <Skeleton width="100px" />
                         </div>
-                        <div
+                        <hr
                           css={{
-                            fontSize: "0.7em",
+                            border: "2px skyblue solid",
                           }}
-                        >
-                          <b>Release year:</b> {detailAnime_releaseYear}
-                        </div>
-                        <div
-                          css={{
-                            fontSize: "0.7em",
-                          }}
-                        >
-                          <b>Episode:</b> {detailAnime_episode}
-                        </div>
-
-                        <div
-                          css={{
-                            fontSize: "0.7em",
-                          }}
-                        >
-                          <b>Duration:</b> {detailAnime_duration}min, per
-                          episode
-                        </div>
-
-                        <div
-                          css={{
-                            fontSize: "0.7em",
-                          }}
-                        >
-                          <b>Description:</b>{" "}
+                        ></hr>
+                        <div>
+                          <div>
+                            <b
+                              css={{
+                                fontSize: "2em",
+                                color: "orange",
+                              }}
+                            >
+                              <Skeleton width="100px" height="50px" />
+                            </b>
+                            <span
+                              css={{
+                                fontSize: "1em",
+                              }}
+                            ></span>
+                          </div>
                           <div
-                            dangerouslySetInnerHTML={{
-                              __html: detailAnime_desc,
+                            css={{
+                              fontSize: "0.7em",
                             }}
-                          ></div>
+                          >
+                            <b>Status:</b> <Skeleton width="100px" />
+                          </div>
+                          <div
+                            css={{
+                              fontSize: "0.7em",
+                            }}
+                          >
+                            <b>Release year:</b> <Skeleton width="100px" />
+                          </div>
+                          <div
+                            css={{
+                              fontSize: "0.7em",
+                            }}
+                          >
+                            <b>Episode:</b> <Skeleton width="100px" />
+                          </div>
+
+                          <div
+                            css={{
+                              fontSize: "0.7em",
+                            }}
+                          >
+                            <b>Duration:</b> <Skeleton width="100px" />
+                          </div>
+
+                          <div
+                            css={{
+                              fontSize: "0.7em",
+                            }}
+                          >
+                            <b>Description:</b>
+                            <Skeleton width="100px" />
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+            ) : errorGetOneAnime ? (
+              <div>Data not found!</div>
+            ) : (
+              dataGetOneAnime && (
+                <div>
+                  <div
+                    css={{
+                      width: "100%",
+                      height: "5vh",
+                    }}
+                  >
+                    <div
+                      css={{
+                        fontWeight: "bold",
+                        fontSize: "1em",
+                        display: "flex",
+                        alignContent: "center",
+                        alignItems: "center",
+                        marginBottom: "10px",
+                        ":hover": {
+                          opacity: "0.5",
+                          cursor: "pointer",
+                        },
+                      }}
+                      onClick={viewDetailAnime.bind(this, false, 1)}
+                    >
+                      <ArrowBackIos /> <span>Back</span>
+                    </div>
+                    <div
+                      css={{
+                        display: "flex",
+                      }}
+                    >
+                      <div
+                        css={{
+                          display: "flex",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <img
+                          css={{
+                            marginRight: "10px",
+                          }}
+                          src={detailAnime_cover}
+                          width="200px"
+                        ></img>
+                        <TransitionsModal
+                          ref={modalRef}
+                          videoFilePath={detailAnime_trailer}
+                        >
+                          <div>
+                            <ButtonTrailer>
+                              <PlayCircle /> Watch Trailer
+                            </ButtonTrailer>
+                          </div>
+                        </TransitionsModal>
+                        <CollectionModal ref={modalRef}>
+                          <div>
+                            <ButtonAddCollection>
+                              <Stars /> Add to Collection
+                            </ButtonAddCollection>
+                          </div>
+                        </CollectionModal>
+                      </div>
+                      <div>
+                        <div>
+                          <h3>{detailAnime_title}</h3>
+                        </div>
+                        <div
+                          css={{
+                            fontSize: "0.8em",
+                            color: "grey",
+                          }}
+                        >
+                          {detailAnime_genre}
+                        </div>
+                        <hr
+                          css={{
+                            border: "2px skyblue solid",
+                          }}
+                        ></hr>
+                        <div>
+                          <div>
+                            <b
+                              css={{
+                                fontSize: "2em",
+                                color: "orange",
+                              }}
+                            >
+                              {detailAnime_score}
+                            </b>
+                            <span
+                              css={{
+                                fontSize: "1em",
+                              }}
+                            >
+                              /100
+                            </span>
+                          </div>
+                          <div
+                            css={{
+                              fontSize: "0.7em",
+                            }}
+                          >
+                            <b>Status:</b> {detailAnime_status}
+                          </div>
+                          <div
+                            css={{
+                              fontSize: "0.7em",
+                            }}
+                          >
+                            <b>Release year:</b> {detailAnime_releaseYear}
+                          </div>
+                          <div
+                            css={{
+                              fontSize: "0.7em",
+                            }}
+                          >
+                            <b>Episode:</b> {detailAnime_episode}
+                          </div>
+
+                          <div
+                            css={{
+                              fontSize: "0.7em",
+                            }}
+                          >
+                            <b>Duration:</b> {detailAnime_duration}min, per
+                            episode
+                          </div>
+
+                          <div
+                            css={{
+                              fontSize: "0.7em",
+                            }}
+                          >
+                            <b>Description:</b>{" "}
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: detailAnime_desc,
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
             )}
           </HomeContainer>
         </main>

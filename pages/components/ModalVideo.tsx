@@ -59,13 +59,21 @@ export default function TransitionsModal(props) {
                 />
               </div>
             </Typography>
-            <Typography id="transition-modal-description" sx={{ mt: 2 }}>
-              <ReactPlayer
-                url={props.videoFilePath}
-                width="100%"
-                height="50vh"
-                controls={true}
-              />
+            <Typography
+              id="transition-modal-description"
+              key={props.videoFilePath}
+              sx={{ mt: 2 }}
+            >
+              {props.videoFilePath != "" ? (
+                <ReactPlayer
+                  url={props.videoFilePath}
+                  width="100%"
+                  height="50vh"
+                  controls={true}
+                />
+              ) : (
+                <div>Trailer not available</div>
+              )}
             </Typography>
           </Box>
         </Fade>

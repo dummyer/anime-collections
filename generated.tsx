@@ -4542,7 +4542,9 @@ export type UserModData = {
   privacy?: Maybe<Scalars["Int"]>;
 };
 
-export type GetOneAnimeQueryVariables = Exact<{ [key: string]: never }>;
+export type GetOneAnimeQueryVariables = Exact<{
+  id?: InputMaybe<Scalars["Int"]>;
+}>;
 
 export type GetOneAnimeQuery = {
   __typename?: "Query";
@@ -4600,8 +4602,8 @@ export type MostFavAnimeQuery = {
 };
 
 export const GetOneAnimeDocument = gql`
-  query getOneAnime {
-    Media(id: 11061) {
+  query getOneAnime($id: Int) {
+    Media(id: $id) {
       id
       title {
         romaji
