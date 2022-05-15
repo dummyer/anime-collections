@@ -42,7 +42,7 @@ export default function CollectionModal(props) {
   useEffect(() => {
     const messagesRef = query(
       collection(db, "myCollectionAlbums"),
-      orderBy("created", "desc")
+      orderBy("created_at", "desc")
     );
     onSnapshot(messagesRef, (snapshot) => {
       // Maps the documents and sets them to the `msgs` state.
@@ -75,12 +75,13 @@ export default function CollectionModal(props) {
     }
   `;
 
-  const addToCollectionHandle = async (album_id) => {
-    if (album_id != "") {
+  const addToCollectionHandle = async (album_id, currentSavedAnime) => {
+    if (album_id != "" && currentSavedAnime.includes(props.animeid) == false) {
       try {
+        currentSavedAnime.push(props.animeid);
         const taskDocRef = doc(db, "myCollectionAlbums", album_id);
         await updateDoc(taskDocRef, {
-          added_anime_id: [props.animeid],
+          added_anime_id: currentSavedAnime,
           update_at: Timestamp.now(),
         });
       } catch (err) {
@@ -153,30 +154,40 @@ export default function CollectionModal(props) {
             >
               {myCollectionAlbums.map((item) => {
                 return (
-                  <div>
-                    <div>
-                      <input
-                        type="button"
-                        onClick={addToCollectionHandle.bind(this, item.id)}
-                        value="Save"
-                        css={{
-                          marginRight: "10px",
-                          backgroundColor: "orange",
-                          border: "0px",
-                          padding: "5px",
-                          color: "white",
-                          borderRadius: "5px",
-                          ":hover": {
-                            opacity: "0.5",
-                            cursor: "pointer",
-                          },
-                        }}
-                      />
-                      <label>
-                        {item.data.album_name} (
-                        {item.data.added_anime_id.length})
-                      </label>
-                    </div>
+                  <div
+                    css={{
+                      paddingBottom: "10px",
+                    }}
+                  >
+                    <button
+                      onClick={addToCollectionHandle.bind(
+                        this,
+                        item.id,
+                        item.data.added_anime_id
+                      )}
+                      css={{
+                        marginRight: "10px",
+                        backgroundColor: "orange",
+                        border: "0px",
+                        padding: "5px",
+                        color: "white",
+                        borderRadius: "5px",
+                        opacity: `${
+                          item.data.added_anime_id.includes(props.animeid)
+                            ? "0.5"
+                            : "1"
+                        }`,
+                        ":hover": {
+                          opacity: "0.5",
+                          cursor: "pointer",
+                        },
+                      }}
+                    >
+                      Save
+                    </button>
+                    <label>
+                      {item.data.album_name} ({item.data.added_anime_id.length})
+                    </label>
                   </div>
                 );
               })}
