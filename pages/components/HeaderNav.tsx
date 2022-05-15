@@ -88,7 +88,6 @@ const HeaderNav = () => {
         <Container>
           <div
             css={{
-              position: "",
               maxWidth: "100vw",
               height: "40vh",
               overflowX: "auto",
