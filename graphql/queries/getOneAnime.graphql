@@ -1,4 +1,4 @@
-query getOneAnime{
+query getOneAnime {
   Media(id: 11061) {
     id
     title {
@@ -7,5 +7,26 @@ query getOneAnime{
       native
       userPreferred
     }
+    description
+    format
+    status
+    seasonYear
+    episodes
+    duration
+    chapters
+    averageScore
+    volumes
+    trailer {
+      id
+      site
+      thumbnail
+    }
+    coverImage {
+      extraLarge
+      large
+      medium
+      color
+    }
+    genres
   }
 }

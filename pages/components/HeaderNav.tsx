@@ -41,6 +41,7 @@ const HeaderNav = () => {
     -moz-box-shadow: 2px 2px 10px #d2d2d2;
     box-shadow: 2px 2px 10px #d2d2d2;
     background-color: skyblue;
+    overflow: hidden;
   `;
 
   const FixedHeader = styled.div`
@@ -59,22 +60,27 @@ const HeaderNav = () => {
     background-color: transparent;
     color: "black";
     font-weight: lighter;
+    overflow: hidden;
     &:hover {
       opacity: 0.5;
       cursor: pointer;
     }
   `;
 
-  function hoverBanner(isHover) {
+  const hoverBanner = (isHover: boolean) => {
     setIsBannerHovered(isHover);
-  }
+  };
 
-  const ref = React.useRef<HTMLDivElement>(null);
-  function scrollBanner(scrollDirection) {
-    var scrollOffset = 20;
-    console.log(scrollDirection);
-    ref.current.scrollLeft += scrollOffset;
-  }
+  const bannerRef = useRef<HTMLDivElement>(null);
+  const scrollBanner = (scrollDirection: string) => {
+    const { scrollLeft, clientWidth } = bannerRef.current;
+    const scrollTo =
+      scrollDirection === "left"
+        ? scrollLeft - clientWidth
+        : scrollLeft + clientWidth;
+
+    bannerRef.current.scrollTo({ left: scrollTo, behavior: "smooth" });
+  };
 
   return (
     <Head>
@@ -89,6 +95,7 @@ const HeaderNav = () => {
               overflowY: "hidden",
               display: "flex",
             }}
+            ref={bannerRef}
             onMouseOver={hoverBanner.bind(this, true)}
             onMouseOut={hoverBanner.bind(this, false)}
           >
@@ -129,19 +136,6 @@ const HeaderNav = () => {
               }}
             />
 
-            <div
-              css={{
-                position: "absolute",
-                alignItems: "center",
-                display: "flex",
-                top: "35vh",
-                right: "45%",
-              }}
-            >
-              <input type="radio" name="banner"></input>
-              <input type="radio" name="banner"></input>
-              <input type="radio" name="banner"></input>
-            </div>
             {isBannerHovered && (
               <div
                 css={{
@@ -152,6 +146,7 @@ const HeaderNav = () => {
                   width: "100vw",
                   listStyle: "none",
                   margin: "0px !important",
+                  overflow: "hidden",
                 }}
               >
                 <Button

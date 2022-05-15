@@ -28,7 +28,9 @@
     "react": "18.1.0",
     "react-apollo": "^3.1.5",
     "react-dom": "18.1.0",
-    "react-loading-skeleton": "^3.1.0"
+    "react-loading-skeleton": "^3.1.0",
+    "react-player": "^2.10.1",
+    "recoil": "^0.7.3-alpha.2"
   },
   "devDependencies": {
     "@emotion/babel-plugin": "^11.9.2",

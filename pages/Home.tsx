@@ -5,16 +5,29 @@ import {
   Splitscreen,
   StarBorder,
   ArrowBackIos,
+  PlayCircle,
 } from "@mui/icons-material";
 import React, { useState, useEffect, useRef } from "react";
 import { useQuery } from "@apollo/client";
 import { GetOneAnimeDocument, MostFavAnimeDocument } from "../generated";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { useRecoilState } from "recoil";
+import { modalState } from "./atoms/modalAtom";
+import TransitionsModal from "./components/ModalVideo";
+import CollectionModal from "./components/ModalCollections";
 
 const Home = () => {
   //const { data, error, loading } = useQuery(MostFavAnimeDocument);
+  const modalRef = ({ handleShow }) => {
+    showModal = handleShow;
+  };
 
+  const onTrailerClick = () => {
+    showModal();
+  };
+
+  const [showModal, setShowModal] = useRecoilState(modalState);
   const queryMultiple = () => {
     const res1 = useQuery(MostFavAnimeDocument);
     const res2 = useQuery(GetOneAnimeDocument);
@@ -38,7 +51,14 @@ const Home = () => {
   const [isViewDetailAnime, setIsViewDetailAnime] = useState(false);
   const [detailAnime_title, setDetailAnime_title] = useState("");
   const [detailAnime_cover, setDetailAnime_cover] = useState("");
+  const [detailAnime_trailer, setDetailAnime_trailer] = useState("");
   const [detailAnime_desc, setDetailAnime_desc] = useState("");
+  const [detailAnime_genre, setDetailAnime_genre] = useState("");
+  const [detailAnime_status, setDetailAnime_status] = useState("");
+  const [detailAnime_releaseYear, setDetailAnime_releaseYear] = useState("");
+  const [detailAnime_duration, setDetailAnime_duration] = useState("");
+  const [detailAnime_episode, setDetailAnime_episode] = useState("");
+  const [detailAnime_score, setDetailAnime_score] = useState("");
 
   const [isSelectedGrid, setIsSelectedGrid] = useState(true);
   const HomeContainer = styled.div`
@@ -49,7 +69,7 @@ const Home = () => {
     margin-top: 10px;
     margin-left: 10px;
     margin-right: 10px;
-    height: 87vh;
+    height: 85vh;
     padding: 10px;
   `;
 
@@ -76,6 +96,48 @@ const Home = () => {
     // }
   `;
 
+  const ButtonTrailer = styled.button`
+    font-size: 1em;
+    border-radius: 4px;
+    border: 0px;
+    padding: 10px;
+    color: white;
+    width: 200px;
+    margin-top: 10px;
+    background-color: skyblue;
+
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    font-weight: lighter;
+    &:hover {
+      opacity: 0.5;
+      cursor: pointer;
+    }
+  `;
+
+  const ButtonAddCollection = styled.button`
+    font-size: 1em;
+    border-radius: 4px;
+    border: 0px;
+    padding: 10px;
+    color: white;
+    width: 200px;
+    margin-top: 10px;
+    background-color: pink;
+
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    font-weight: lighter;
+    &:hover {
+      opacity: 0.5;
+      cursor: pointer;
+    }
+  `;
+
   function selectGrid(isSelectGrid) {
     setIsSelectedGrid(isSelectGrid);
   }
@@ -84,6 +146,17 @@ const Home = () => {
     setIsViewDetailAnime(isView);
     if (dataGetOneAnime) {
       setDetailAnime_title(dataGetOneAnime.Media.title.english);
+      setDetailAnime_cover(dataGetOneAnime.Media.coverImage.large);
+      setDetailAnime_trailer(
+        "https://www.youtube.com/watch?v=" + dataGetOneAnime.Media.trailer.id
+      );
+      setDetailAnime_genre(dataGetOneAnime.Media.genres.join(", "));
+      setDetailAnime_desc(dataGetOneAnime.Media.description);
+      setDetailAnime_status(dataGetOneAnime.Media.status);
+      setDetailAnime_releaseYear(dataGetOneAnime.Media.seasonYear);
+      setDetailAnime_episode(dataGetOneAnime.Media.episodes);
+      setDetailAnime_duration(dataGetOneAnime.Media.duration);
+      setDetailAnime_score(dataGetOneAnime.Media.averageScore);
     }
   }
 
@@ -288,10 +361,6 @@ const Home = () => {
               <div>
                 <div
                   css={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignContent: "center",
-                    alignItems: "center",
                     width: "100%",
                     height: "5vh",
                   }}
@@ -301,9 +370,9 @@ const Home = () => {
                       fontWeight: "bold",
                       fontSize: "1em",
                       display: "flex",
-                      justifyContent: "space-between",
                       alignContent: "center",
                       alignItems: "center",
+                      marginBottom: "10px",
                       ":hover": {
                         opacity: "0.5",
                         cursor: "pointer",
@@ -313,7 +382,123 @@ const Home = () => {
                   >
                     <ArrowBackIos /> <span>Back</span>
                   </div>
-                  {detailAnime_title}
+                  <div
+                    css={{
+                      display: "flex",
+                    }}
+                  >
+                    <div
+                      css={{
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <img
+                        css={{
+                          marginRight: "10px",
+                        }}
+                        src={detailAnime_cover}
+                        width="200px"
+                      ></img>
+                      <TransitionsModal
+                        ref={modalRef}
+                        videoFilePath={detailAnime_trailer}
+                      >
+                        <div>
+                          <ButtonTrailer>
+                            <PlayCircle /> Watch Trailer
+                          </ButtonTrailer>
+                        </div>
+                      </TransitionsModal>
+                      <CollectionModal ref={modalRef}>
+                        <div>
+                          <ButtonAddCollection>
+                            <PlayCircle /> Add to Collection
+                          </ButtonAddCollection>
+                        </div>
+                      </CollectionModal>
+                    </div>
+                    <div>
+                      <div>
+                        <h3>{detailAnime_title}</h3>
+                      </div>
+                      <div
+                        css={{
+                          fontSize: "0.8em",
+                          color: "grey",
+                        }}
+                      >
+                        {detailAnime_genre}
+                      </div>
+                      <hr
+                        css={{
+                          border: "2px skyblue solid",
+                        }}
+                      ></hr>
+                      <div>
+                        <div>
+                          <b
+                            css={{
+                              fontSize: "2em",
+                              color: "orange",
+                            }}
+                          >
+                            {detailAnime_score}
+                          </b>
+                          <span
+                            css={{
+                              fontSize: "1em",
+                            }}
+                          >
+                            /100
+                          </span>
+                        </div>
+                        <div
+                          css={{
+                            fontSize: "0.7em",
+                          }}
+                        >
+                          <b>Status:</b> {detailAnime_status}
+                        </div>
+                        <div
+                          css={{
+                            fontSize: "0.7em",
+                          }}
+                        >
+                          <b>Release year:</b> {detailAnime_releaseYear}
+                        </div>
+                        <div
+                          css={{
+                            fontSize: "0.7em",
+                          }}
+                        >
+                          <b>Episode:</b> {detailAnime_episode}
+                        </div>
+
+                        <div
+                          css={{
+                            fontSize: "0.7em",
+                          }}
+                        >
+                          <b>Duration:</b> {detailAnime_duration}min, per
+                          episode
+                        </div>
+
+                        <div
+                          css={{
+                            fontSize: "0.7em",
+                          }}
+                        >
+                          <b>Description:</b>{" "}
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: detailAnime_desc,
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
