@@ -340,9 +340,9 @@ const Home = () => {
                                 },
                               }}
                             >
-                              <CollectionModal ref={modalRef} animeid={item.id}>
+                              {/* <CollectionModal ref={modalRef} animeid={item.id}>
                                 <StarBorder />
-                              </CollectionModal>
+                              </CollectionModal> */}
                             </div>
                             <div
                               css={{
