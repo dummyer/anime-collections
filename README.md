@@ -1,7 +1,9 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 ## Note
 I've tried to host to both github pages and firebase but it is still struggling. I hope you don't mind that i use this way to show the demo.
+
 Demo video : https://drive.google.com/file/d/1cQKoPGEH0237an3J9WBo0VdtSbrmIiLN/view?usp=sharing
+
 Firebase hosting(Still figuring out how to direct to index.tsx) : https://anime-collections-ac5d1.web.app/
 
 ## Getting Started
